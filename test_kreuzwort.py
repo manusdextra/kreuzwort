@@ -1,26 +1,36 @@
+import unittest
+from ddt import ddt, data, unpack
 from kreuzwort import find_nodes
 
-first_batch = [
-    "book",
-    "tissue",
-    "water",
-    ]
+@ddt
+class TestNodes(unittest.TestCase):
 
-second_batch = [
-    "dictionary",
-    "maths",
-    "tablet",
-    ]
-
-third_batch = [
-    "rucksack",
-    "vocabulary",
-    "medicine",
-    ]
-
-def test_first_batch():
-    assert find_nodes(first_batch) == [
-            [],
-            [0,5],
-            [2,3],
-    ]
+    @unpack
+    @data(
+        (
+            [ "book", "tissue", "water", ],
+            [
+                [],
+                [0,5],
+                [2,3],
+            ]
+        ),
+        (   
+            [ "dictionary", "maths", "tablet", ],
+            [
+                [3,7],
+                [1,2],
+                [0,1,5],
+            ]
+        ),
+        (
+            [ "rucksack", "vocabulary", "medicine", ],
+            [
+                [0,1,2,5,6],
+                [2,3,5,6,7],
+                [4],
+            ]
+        ),
+    )
+    def test_nodes(self, inputs, expected):
+        self.assertEqual(find_nodes(inputs), expected)
