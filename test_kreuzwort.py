@@ -27,7 +27,7 @@ class TestNodes(unittest.TestCase):
             [ "rucksack", "vocabulary", "medicine", ],
             [
                 [0,1,2,5,6],
-                [2,3,5,6,7],
+                [2,3,5,7,8],
                 [4],
             ]
         ),
