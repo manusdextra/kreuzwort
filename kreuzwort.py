@@ -54,7 +54,3 @@ class Wordlist:
             # this is done for convenience, I don't know if it actually will be useful in the future
             item.nodes = list(item.named_nodes.keys())
         return items
-
-def find_nodes(words):
-    words = Wordlist(words)
-    return [word.nodes for word in words.items]

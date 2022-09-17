@@ -1,6 +1,6 @@
 import unittest
 from ddt import ddt, data, unpack
-from kreuzwort import find_nodes
+from kreuzwort import Wordlist
 
 @ddt
 class TestNodes(unittest.TestCase):
@@ -33,4 +33,6 @@ class TestNodes(unittest.TestCase):
         ),
     )
     def test_nodes(self, inputs, expected):
-        self.assertEqual(find_nodes(inputs), expected)
+        self.assertEqual([
+            word.nodes for word in Wordlist(inputs).items
+        ], expected)
