@@ -54,3 +54,34 @@ class TestNodes(unittest.TestCase):
         self.assertEqual([
             word.nodes for word in Wordlist(inputs).items
         ], expected)
+
+@ddt
+class TestRanking(unittest.TestCase):
+
+    @unpack
+    @data(
+        (
+            [ "chair", "cardboard", "speaker", "bottle"],
+            [ "cardboard", "speaker", "chair", "bottle" ],
+        ),
+        (
+            ["pen", "eraser", "schedule", "phone"],
+            [ "schedule", "phone", "pen", "eraser", ],
+        ),
+        (
+            [ "book", "tissue", "water", ],
+            [ "tissue", "water", "book", ],
+        ),
+        (
+            [ "dictionary", "maths", "tablet", ],
+            [ "tablet", "dictionary", "maths", ],
+        ),
+        (
+            [ "rucksack", "vocabulary", "medicine", ],
+            [ "rucksack", "vocabulary", "medicine", ],
+        ),
+    )
+    def test_ranking(self, inputs, expected):
+        self.assertEqual([
+            word for word in Wordlist(inputs).items_by_nodes
+        ], expected)
