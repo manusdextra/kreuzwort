@@ -6,7 +6,7 @@ class Word:
         self.nodes = list()
     
     def __repr__(self):
-        return f'{self.letters} has the following nodes: {self.named_nodes}'
+        return f"'{self.letters}'"
 
     def __iter__(self):
         return iter(self.letters)
@@ -17,6 +17,7 @@ class Wordlist:
         self.items = [Word(item) for item in words]
         self.alphabet = self.find_all_letters()
         self.items = self.analyse(self.items)
+        self.first_choice = self.rank_words()
         
     def __iter__(self):
         return iter(self.items)
@@ -54,3 +55,7 @@ class Wordlist:
             # this is done for convenience, I don't know if it actually will be useful in the future
             item.nodes = list(item.named_nodes.keys())
         return items
+
+    def rank_words(self):
+        return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)[0]
+
