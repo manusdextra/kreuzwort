@@ -62,26 +62,26 @@ class TestRanking(unittest.TestCase):
     @data(
         (
             [ "chair", "cardboard", "speaker", "bottle"],
-            [ "cardboard", "speaker", "chair", "bottle" ],
+            [ "cardboard"],
         ),
         (
             ["pen", "eraser", "schedule", "phone"],
-            [ "schedule", "phone", "pen", "eraser", ],
+            [ "schedule"],
         ),
         (
             [ "book", "tissue", "water", ],
-            [ "tissue", "water", "book", ],
+            [ "tissue"],
         ),
         (
             [ "dictionary", "maths", "tablet", ],
-            [ "tablet", "dictionary", "maths", ],
+            [ "tablet"],
         ),
         (
             [ "rucksack", "vocabulary", "medicine", ],
-            [ "rucksack", "vocabulary", "medicine", ],
+            [ "rucksack"],
         ),
     )
     def test_ranking(self, inputs, expected):
         self.assertEqual([
-            word for word in Wordlist(inputs).items_by_nodes
+            Wordlist(inputs).first_choice.letters
         ], expected)
