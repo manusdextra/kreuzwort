@@ -49,6 +49,16 @@ class TestNodes(unittest.TestCase):
                 [4],
             ]
         ),
+        (
+            [ "armchair", "variety", "uncle", "country", "special",],
+            [
+                [0,1,3,5,6,7],
+                [1,2,3,4,5,6],
+                [0,1,2,3,4],
+                [0,2,3,4,5,6],
+                [2,3,4,5,6],
+            ]
+        )
     )
     def test_nodes(self, inputs, expected):
         self.assertEqual([
