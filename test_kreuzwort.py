@@ -93,5 +93,5 @@ class TestRanking(unittest.TestCase):
     )
     def test_ranking(self, inputs, expected):
         self.assertEqual([
-            Wordlist(inputs).first_choice.letters
+            Wordlist(inputs).best_choices[0].letters
         ], expected)
