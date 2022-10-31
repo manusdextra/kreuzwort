@@ -162,3 +162,18 @@ class TestRanking(unittest.TestCase):
     )
     def test_ranking(self, inputs, expected):
         self.assertEqual([Table(inputs).placed[0].letters], expected)
+
+
+@ddt
+class TestCombinations(unittest.TestCase):
+    @unpack
+    @data(
+        (
+            ["chair", "cardboard"],
+            [(0, 0), (1, 2), (2, 4), (6, 2), (7, 4)],
+        ),
+    )
+    def test_combinations(self, inputs, expected):
+        table = Table(inputs)
+        (current, next) = table.unplaced
+        self.assertEqual(table.find_possibilities(current, next), expected)
