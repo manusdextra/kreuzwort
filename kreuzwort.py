@@ -70,4 +70,4 @@ class Wordlist:
 class Table:
     def __init__(self, words) -> None:
         self.unplaced: Wordlist = Wordlist(words)
-        self.next: Word = self.unplaced.best_choices.pop(0)
+        self.placed = [ self.unplaced.best_choices.pop(0) ]
