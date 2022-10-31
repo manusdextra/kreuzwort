@@ -1,4 +1,6 @@
 from typing import Iterator, Literal
+
+
 class Word:
     def __init__(self, letters) -> None:
         self.letters: str = letters
@@ -31,7 +33,6 @@ class Wordlist:
                     alphabet[letter] += 1
                 else:
                     alphabet[letter] = 1
-        # print(alphabet)
         return alphabet
 
     def analyse(self, items) -> list[Word]:
@@ -51,12 +52,14 @@ class Wordlist:
                 if self.alphabet[letter] == item.letters.count(letter):
                     item.named_nodes[index] = 0
 
-            # this seems to be necessary because you can't delete entries while looping over a dict
+            # this seems to be necessary because 
+            # you can't delete entries while looping over a dict
             item.named_nodes = {
                 key: val for key, val in item.named_nodes.items() if val != 0
             }
 
-            # this is done for convenience, I don't know if it actually will be useful in the future
+            # this is done for convenience, I don't know if
+            # it actually will be useful in the future
             item.nodes = list(item.named_nodes.keys())
         return items
 
