@@ -1,3 +1,5 @@
+"""Generate an arrowword puzzle from an unordered list of words (and definitions)."""
+
 from typing import Iterator, Literal
 
 
@@ -52,7 +54,7 @@ class Wordlist:
                 if self.alphabet[letter] == item.letters.count(letter):
                     item.named_nodes[index] = 0
 
-            # this seems to be necessary because 
+            # this seems to be necessary because
             # you can't delete entries while looping over a dict
             item.named_nodes = {
                 key: val for key, val in item.named_nodes.items() if val != 0
@@ -70,4 +72,4 @@ class Wordlist:
 class Table:
     def __init__(self, words) -> None:
         self.unplaced: Wordlist = Wordlist(words)
-        self.placed = [ self.unplaced.best_choices.pop(0) ]
+        self.placed = [self.unplaced.best_choices.pop(0)]
