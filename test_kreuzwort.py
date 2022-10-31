@@ -120,4 +120,4 @@ class TestRanking(unittest.TestCase):
         ),
     )
     def test_ranking(self, inputs, expected):
-        self.assertEqual([Table(inputs).next.letters], expected)
+        self.assertEqual([Table(inputs).placed[0].letters], expected)
