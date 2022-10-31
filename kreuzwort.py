@@ -1,29 +1,30 @@
+from typing import Iterator, Literal
 class Word:
-    def __init__(self, letters):
-        self.letters = letters
-        self.hint = ""  # definition to be added
-        self.named_nodes = dict()
-        self.nodes = list()
+    def __init__(self, letters) -> None:
+        self.letters: str = letters
+        self.hint: Literal[""] = ""  # definition to be added
+        self.named_nodes: dict[int, str] = dict()
+        self.nodes: list[int] = list()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"'{self.letters}'"
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         return iter(self.letters)
 
 
 class Wordlist:
-    def __init__(self, words):
-        self.items = [Word(item) for item in words]
-        self.alphabet = self.find_all_letters()
-        self.items = self.analyse(self.items)
-        self.best_choices = self.rank_words()
+    def __init__(self, words) -> None:
+        self.items: list[Word] = [Word(item) for item in words]
+        self.alphabet: dict[str, int] = self.find_all_letters()
+        self.items: list[Word] = self.analyse(self.items)
+        self.best_choices: list[Word] = self.rank_words()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Word]:
         return iter(self.items)
 
-    def find_all_letters(self):
-        alphabet = dict()
+    def find_all_letters(self) -> dict[str, int]:
+        alphabet: dict[str, int] = dict()
         for item in self.items:
             for letter in item.letters:
                 if letter in alphabet.keys():
@@ -33,7 +34,7 @@ class Wordlist:
         # print(alphabet)
         return alphabet
 
-    def analyse(self, items):
+    def analyse(self, items) -> list[Word]:
         # find common letters
         for item in items:
             for i in range(0, len(item.letters)):
@@ -59,5 +60,5 @@ class Wordlist:
             item.nodes = list(item.named_nodes.keys())
         return items
 
-    def rank_words(self):
+    def rank_words(self) -> list[Word]:
         return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
