@@ -38,13 +38,13 @@ class Wordlist:
     def analyse(self, items) -> list[Word]:
         # find common letters
         for item in items:
-            for i in range(0, len(item.letters)):
-                if item.letters[i] not in self.alphabet.keys():
+            for index, value in enumerate(item.letters):
+                if value not in self.alphabet.keys():
                     continue
-                if self.alphabet[item.letters[i]] == 1:
+                if self.alphabet[value] == 1:
                     continue
                 else:
-                    item.named_nodes[i] = item.letters[i]
+                    item.named_nodes[index] = value
 
         # throw out letters that only occur in the same word
         for item in items:
