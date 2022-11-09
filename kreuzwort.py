@@ -81,20 +81,16 @@ class Wordlist:
 
 
 class Table:
+    """here, the words are joined up and eventually, a completed
+    puzzle will be printed / output"""
+
     def __init__(self, words) -> None:
+        """maintain separate lists"""
         self.unplaced: Wordlist = Wordlist(words)
         self.placed: list[Word] = self.place_words()
 
-    def place_words(self):
-        placed: list[Word] = []
-        for index, word in enumerate(self.unplaced.best_choices):
-            current = self.unplaced.best_choices.pop(index)
-            next = self.unplaced.best_choices[0]
-            possibilities = self.find_possibilities(current, next)
-            placed.append(current)
-        return placed
-
     def find_possibilities(self, current, next) -> list[tuple[int, int]]:
+        """this helps consider the options between one word and the next"""
         possibilities: list[tuple[int, int]] = []
         for index, letter in enumerate(current.letters):
             matches: list = [
@@ -103,3 +99,13 @@ class Table:
             for match in matches:
                 possibilities.append((index, match))
         return possibilities
+
+    def place_words(self) -> list[Word]:
+        """main combination loop"""
+        placed: list[Word] = []
+        for index, word in enumerate(self.unplaced.best_choices):
+            current = self.unplaced.best_choices.pop(index)
+            next = self.unplaced.best_choices[0]
+            possibilities = self.find_possibilities(current, next)
+            placed.append(current)
+        return placed
