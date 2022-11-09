@@ -23,35 +23,39 @@ class Word:
 
 
 class Wordlist:
+    """a sorted list of words, ranked by their number of possible combinations"""
+
     def __init__(self, words) -> None:
+        """analysis methods"""
         self.items: list[Word] = [Word(item) for item in words]
         self.alphabet: dict[str, int] = self.find_all_letters()
         self.items: list[Word] = self.analyse(self.items)
         self.best_choices: list[Word] = self.rank_words()
 
     def __iter__(self) -> Iterator[Word]:
+        """helper"""
         return iter(self.items)
 
     def find_all_letters(self) -> dict[str, int]:
-        alphabet: dict[str, int] = dict()
+        """starting point for analysis"""
+        alphabet: dict[str, int] = {}
         for item in self.items:
             for letter in item.letters:
-                if letter in alphabet.keys():
+                if letter in alphabet:
                     alphabet[letter] += 1
                 else:
                     alphabet[letter] = 1
         return alphabet
 
     def analyse(self, items) -> list[Word]:
-        # find common letters
+        """find common letters"""
         for item in items:
             for index, value in enumerate(item.letters):
-                if value not in self.alphabet.keys():
+                if value not in self.alphabet:
                     continue
                 if self.alphabet[value] == 1:
                     continue
-                else:
-                    item.named_nodes[index] = value
+                item.named_nodes[index] = value
 
         # throw out letters that only occur in the same word
         for item in items:
@@ -71,6 +75,8 @@ class Wordlist:
         return items
 
     def rank_words(self) -> list[Word]:
+        """this could be adapted to different strategies
+        according to what determines a word's worth"""
         return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
 
 
