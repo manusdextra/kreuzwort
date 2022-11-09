@@ -175,6 +175,22 @@ class TestCombinations(unittest.TestCase):
             ["cardboard", "chair"],
             [(0, 0), (1, 2), (2, 4), (6, 2), (7, 4)],
         ),
+        (
+            ["rucksack", "maths"],
+            [(4, 4), (5, 1)],
+        ),
+        (
+            ["tablet", "dictionary"],
+            [(0, 3), (1, 7), (5, 3)],
+        ),
+        (
+            ["medicine", "rucksack"],
+            [(4, 2), (4, 6)],
+        ),
+        (
+            ["abc", "xyz"],
+            [],
+        ),
     )
     def test_combinations(self, inputs, expected):
         table = Table(inputs)
