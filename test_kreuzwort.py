@@ -121,7 +121,10 @@ class TestNamedNodes(unittest.TestCase):
         ),
     )
     def test_named_nodes(self, inputs, expected):
-        self.assertEqual([word.named_nodes for word in Wordlist(inputs).items], expected)
+        self.assertEqual(
+            [word.named_nodes for word in Wordlist(inputs).items], expected
+        )
+
 
 @ddt
 class TestRanking(unittest.TestCase):
@@ -169,7 +172,7 @@ class TestCombinations(unittest.TestCase):
     @unpack
     @data(
         (
-            ["chair", "cardboard"],
+            ["cardboard", "chair"],
             [(0, 0), (1, 2), (2, 4), (6, 2), (7, 4)],
         ),
     )
