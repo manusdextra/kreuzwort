@@ -75,7 +75,7 @@ class Table:
         self.placed: list[Word] = self.place_words()
 
     def place_words(self):
-        placed = list()
+        placed: list[Word] = []
         for index, word in enumerate(self.unplaced.best_choices):
             current = self.unplaced.best_choices.pop(index)
             next = self.unplaced.best_choices[0]
@@ -84,6 +84,11 @@ class Table:
         return placed
 
     def find_possibilities(self, current, next) -> list[tuple[int, int]]:
-        possibilities: list[tuple[int, int]] = list()
-        # return possibilities
-        return [(0, 0), (1, 2), (2, 4), (6, 2), (7, 4)]
+        possibilities: list[tuple[int, int]] = []
+        for index, letter in enumerate(current.letters):
+            matches: list = [
+                i for i in next.named_nodes.keys() if next.named_nodes[i] == letter
+            ]
+            for match in matches:
+                possibilities.append((index, match))
+        return possibilities
