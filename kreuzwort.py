@@ -103,9 +103,10 @@ class Table:
     def place_words(self) -> list[Word]:
         """main combination loop"""
         placed: list[Word] = []
-        for index, word in enumerate(self.unplaced.best_choices):
+        for index, _ in enumerate(self.unplaced.best_choices):
             current = self.unplaced.best_choices.pop(index)
             next = self.unplaced.best_choices[0]
             possibilities = self.find_possibilities(current, next)
-            placed.append(current)
+            if possibilities:
+                placed.append(current)
         return placed
