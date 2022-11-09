@@ -4,16 +4,21 @@ from typing import Iterator, Literal
 
 
 class Word:
+    """class for dictionary items and their necessary properties"""
+
     def __init__(self, letters) -> None:
+        """gather information that will help in analysing the dictionary"""
         self.letters: str = letters
         self.hint: Literal[""] = ""  # definition to be added
-        self.named_nodes: dict[int, str] = dict()
-        self.nodes: list[int] = list()
+        self.named_nodes: dict[int, str] = {}
+        self.nodes: list[int] = []
 
     def __repr__(self) -> str:
+        """use the word itself to represent this class"""
         return f"'{self.letters}'"
 
     def __iter__(self) -> Iterator[str]:
+        """another helper with the same function as above"""
         return iter(self.letters)
 
 
