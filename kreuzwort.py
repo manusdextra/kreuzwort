@@ -89,12 +89,15 @@ class Table:
         self.unplaced: Wordlist = Wordlist(words)
         self.placed: list[Word] = self.place_words()
 
-    def find_possibilities(self, current, next) -> list[tuple[int, int]]:
-        """this helps consider the options between one word and the next"""
+    def find_possibilities(self, current, candidate) -> list[tuple[int, int]]:
+        """
+        list all possible connections between two words,
+        represented as a tuple of index and letter
+        """
         possibilities: list[tuple[int, int]] = []
         for index, letter in enumerate(current.letters):
             matches: list = [
-                i for i in next.named_nodes.keys() if next.named_nodes[i] == letter
+                i for i in candidate.named_nodes.keys() if candidate.named_nodes[i] == letter
             ]
             for match in matches:
                 possibilities.append((index, match))
@@ -103,10 +106,14 @@ class Table:
     def place_words(self) -> list[Word]:
         """main combination loop"""
         placed: list[Word] = []
-        for index, _ in enumerate(self.unplaced.best_choices):
-            current = self.unplaced.best_choices.pop(index)
-            next = self.unplaced.best_choices[0]
-            possibilities = self.find_possibilities(current, next)
-            if possibilities:
+        while self.unplaced.best_choices:
+            print(placed)
+            current = self.unplaced.best_choices.pop(0)
+            # automatically place first word
+            if not placed:
                 placed.append(current)
+            for candidate in self.unplaced.best_choices:
+                if self.find_possibilities(current, candidate):
+                    placed.append(candidate)
+                    break
         return placed

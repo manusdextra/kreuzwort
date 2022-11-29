@@ -196,3 +196,37 @@ class TestCombinations(unittest.TestCase):
         table = Table(inputs)
         (current, next) = table.unplaced
         self.assertEqual(table.find_possibilities(current, next), expected)
+
+@ddt
+class TestPlaceables(unittest.TestCase):
+    @unpack
+    @data(
+        (
+            ["pen", "eraser", "schedule", "phone"],
+            [
+                "schedule",
+                "phone",
+                "pen",
+                "eraser",
+            ],
+        ),
+        (
+            [
+                "armchair",
+                "variety",
+                "uncle",
+                "country",
+                "special",
+            ],
+            [
+                "armchair",
+                "variety",
+                "country",
+                "uncle",
+                "special",
+            ],
+        ),
+    )
+    def test_placeables(self, inputs, expected) -> None:
+        # without this comprehension, the lists will look identical and the test will still fail
+        self.assertEqual([word.letters for word in Table(inputs).placed], expected)
