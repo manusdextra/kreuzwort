@@ -127,47 +127,6 @@ class TestNamedNodes(unittest.TestCase):
 
 
 @ddt
-class TestRanking(unittest.TestCase):
-    @unpack
-    @data(
-        (
-            ["chair", "cardboard", "speaker", "bottle"],
-            ["cardboard"],
-        ),
-        (
-            ["pen", "eraser", "schedule", "phone"],
-            ["schedule"],
-        ),
-        (
-            [
-                "book",
-                "tissue",
-                "water",
-            ],
-            ["tissue"],
-        ),
-        (
-            [
-                "dictionary",
-                "maths",
-                "tablet",
-            ],
-            ["tablet"],
-        ),
-        (
-            [
-                "rucksack",
-                "vocabulary",
-                "medicine",
-            ],
-            ["rucksack"],
-        ),
-    )
-    def test_ranking(self, inputs, expected):
-        self.assertEqual([Table(inputs).placed[0].letters], expected)
-
-
-@ddt
 class TestCombinations(unittest.TestCase):
     @unpack
     @data(
@@ -197,36 +156,70 @@ class TestCombinations(unittest.TestCase):
         (current, next) = table.unplaced
         self.assertEqual(table.find_possibilities(current, next), expected)
 
+
 @ddt
-class TestPlaceables(unittest.TestCase):
+class TestRanking(unittest.TestCase):
     @unpack
     @data(
         (
             ["pen", "eraser", "schedule", "phone"],
+            ["schedule", "phone", "pen", "eraser"],
+        ),
+        (
             [
-                "schedule",
-                "phone",
-                "pen",
-                "eraser",
+                "uncle",
+                "armchair",
+                "variety",
+                "country",
+                "special",
+            ],
+            [
+                "armchair",
+                "variety",
+                "country",
+                "uncle",
+                "special",
             ],
         ),
         (
             [
-                "armchair",
-                "variety",
-                "uncle",
-                "country",
-                "special",
+                "dictionary",
+                "maths",
+                "tablet",
             ],
             [
-                "armchair",
-                "variety",
-                "country",
-                "uncle",
-                "special",
+                "tablet",
+                "dictionary",
+                "maths",
+            ],
+        ),
+        (
+            [
+                "rucksack",
+                "vocabulary",
+                "medicine",
+            ],
+            [
+                "rucksack",
+                "vocabulary",
+                "medicine",
             ],
         ),
     )
     def test_placeables(self, inputs, expected) -> None:
         # without this comprehension, the lists will look identical and the test will still fail
+        self.assertEqual([word.letters for word in Wordlist(inputs).best_choices], expected)
+
+    @unpack
+    @data(
+        (
+            ["chair", "cardboard", "speaker", "bottle"],
+            ["cardboard", "speaker", "chair"],
+        ),
+        (
+            ["book", "tissue", "water"],
+            ["tissue", "water"],
+        ),
+    )
+    def test_unplaceables(self, inputs, expected) -> None:
         self.assertEqual([word.letters for word in Table(inputs).placed], expected)
