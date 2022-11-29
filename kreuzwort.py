@@ -50,12 +50,12 @@ class Wordlist:
     def analyse(self, items) -> list[Word]:
         """find common letters"""
         for item in items:
-            for index, value in enumerate(item.letters):
-                if value not in self.alphabet:
+            for index, letter in enumerate(item.letters):
+                if letter not in self.alphabet:
                     continue
-                if self.alphabet[value] == 1:
+                if self.alphabet[letter] == 1:
                     continue
-                item.named_nodes[index] = value
+                item.named_nodes[index] = letter
 
         # throw out letters that only occur in the same word
         for item in items:
