@@ -1,12 +1,12 @@
-import unittest
-from ddt import ddt, data, unpack
+"""tests for kreuzwort.py"""
+
+import pytest
 from kreuzwort import Wordlist, Table
 
 
-@ddt
-class TestNodes(unittest.TestCase):
-    @unpack
-    @data(
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
         (
             ["chair", "cardboard", "speaker", "bottle"],
             [
@@ -77,15 +77,20 @@ class TestNodes(unittest.TestCase):
                 [2, 3, 4, 5, 6],
             ],
         ),
-    )
-    def test_nodes(self, inputs, expected):
-        self.assertEqual([word.nodes for word in Wordlist(inputs).items], expected)
+    ],
+)
+def test_nodes(inputs, expected):
+    """
+    Given a combination of words, this function should return
+    a list of lists with the indexes of letters where a combination
+    with other words is possible
+    """
+    assert expected == [word.nodes for word in Wordlist(inputs).items]
 
 
-@ddt
-class TestNamedNodes(unittest.TestCase):
-    @unpack
-    @data(
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
         (
             ["chair", "cardboard", "speaker", "bottle"],
             [
@@ -119,17 +124,19 @@ class TestNamedNodes(unittest.TestCase):
                 {0: "t", 1: "a", 5: "t"},
             ],
         ),
-    )
-    def test_named_nodes(self, inputs, expected):
-        self.assertEqual(
-            [word.named_nodes for word in Wordlist(inputs).items], expected
-        )
+    ],
+)
+def test_named_nodes(inputs, expected):
+    """
+    Given a list of words, this function should return a dict for each word
+    containing the indexes of possible matches and the letter at that index
+    """
+    assert expected == [word.named_nodes for word in Wordlist(inputs).items]
 
 
-@ddt
-class TestCombinations(unittest.TestCase):
-    @unpack
-    @data(
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
         (
             ["cardboard", "chair"],
             [(0, 0), (1, 2), (2, 4), (6, 2), (7, 4)],
@@ -150,17 +157,21 @@ class TestCombinations(unittest.TestCase):
             ["abc", "xyz"],
             [],
         ),
-    )
-    def test_combinations(self, inputs, expected):
-        table = Table(inputs)
-        (current, next) = table.unplaced
-        self.assertEqual(table.find_possibilities(current, next), expected)
+    ],
+)
+def test_combinations(inputs, expected):
+    """
+    Given two words, this should return a list of tuples containing the indexes
+    of common letters in the first and second word
+    """
+    table = Table(inputs)
+    (current, candidate) = table.unplaced
+    assert expected == table.find_possibilities(current, candidate)
 
 
-@ddt
-class TestRanking(unittest.TestCase):
-    @unpack
-    @data(
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
         (
             ["pen", "eraser", "schedule", "phone"],
             ["schedule", "phone", "pen", "eraser"],
@@ -205,13 +216,20 @@ class TestRanking(unittest.TestCase):
                 "medicine",
             ],
         ),
-    )
-    def test_placeables(self, inputs, expected) -> None:
-        # without this comprehension, the lists will look identical and the test will still fail
-        self.assertEqual([word.letters for word in Wordlist(inputs).best_choices], expected)
+    ],
+)
+def test_placeables(inputs, expected) -> None:
+    """
+    given a list of words, this should sort them in order of how easy
+    they are to place
+    """
+    # without this comprehension, the lists will look identical and the test will still fail
+    assert expected == [word.letters for word in Wordlist(inputs).best_choices]
 
-    @unpack
-    @data(
+
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
         (
             ["chair", "cardboard", "speaker", "bottle"],
             ["cardboard", "speaker", "chair"],
@@ -220,6 +238,11 @@ class TestRanking(unittest.TestCase):
             ["book", "tissue", "water"],
             ["tissue", "water"],
         ),
-    )
-    def test_unplaceables(self, inputs, expected) -> None:
-        self.assertEqual([word.letters for word in Table(inputs).placed], expected)
+    ],
+)
+def test_unplaceables(inputs, expected) -> None:
+    """
+    given a list of words, this should eliminate those words which cannot be combined
+    with any others in the list
+    """
+    assert expected == [word.letters for word in Table(inputs).placed]
