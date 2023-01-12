@@ -15,11 +15,15 @@ class Word:
 
     def __repr__(self) -> str:
         """use the word itself to represent this class"""
-        return f"'{self.letters}'"
+        return self.letters
 
     def __iter__(self) -> Iterator[str]:
         """another helper with the same function as above"""
         return iter(self.letters)
+
+    def __eq__(self, other) -> bool:
+        """this helps with testing"""
+        return self.letters == other
 
 
 class Wordlist:
@@ -34,7 +38,7 @@ class Wordlist:
 
     def __iter__(self) -> Iterator[Word]:
         """helper"""
-        return iter(self.items)
+        return iter([word for word in self.items])
 
     def find_all_letters(self) -> dict[str, int]:
         """starting point for analysis"""
@@ -75,8 +79,14 @@ class Wordlist:
         return items
 
     def rank_words(self) -> list[Word]:
-        """this could be adapted to different strategies
-        according to what determines a word's worth"""
+        """
+        this could be adapted to different strategies
+        according to what determines a word's worth
+
+        TODO: it could also return a score, which would
+        make testing it easier since more than one word
+        can have a particular score
+        """
         return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
 
 
@@ -97,23 +107,24 @@ class Table:
         possibilities: list[tuple[int, int]] = []
         for index, letter in enumerate(current.letters):
             matches: list = [
-                i for i in candidate.named_nodes.keys() if candidate.named_nodes[i] == letter
+                i
+                for i in candidate.named_nodes.keys()
+                if candidate.named_nodes[i] == letter
             ]
             for match in matches:
                 possibilities.append((index, match))
         return possibilities
 
     def place_words(self) -> list[Word]:
-        """main combination loop"""
-        placed: list[Word] = []
-        while self.unplaced.best_choices:
-            print(placed)
-            current = self.unplaced.best_choices.pop(0)
-            # automatically place first word
-            if not placed:
-                placed.append(current)
-            for candidate in self.unplaced.best_choices:
-                if self.find_possibilities(current, candidate):
-                    placed.append(candidate)
-                    break
+        """
+        main combination loop
+
+        TODO: design a data structure for recording placement options,
+        ideally in a way that has branches for the different possibilities
+        """
+        placed: list[Word] = [self.unplaced.best_choices.pop(0)]
+        for index, candidate in enumerate(self.unplaced.best_choices):
+            current = placed[index]
+            if self.find_possibilities(current, candidate):
+                placed.append(candidate)
         return placed

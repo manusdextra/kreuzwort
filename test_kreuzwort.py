@@ -224,7 +224,7 @@ def test_placeables(inputs, expected) -> None:
     they are to place
     """
     # without this comprehension, the lists will look identical and the test will still fail
-    assert expected == [word.letters for word in Wordlist(inputs).best_choices]
+    assert expected == Wordlist(inputs).best_choices
 
 
 @pytest.mark.parametrize(
@@ -245,4 +245,4 @@ def test_unplaceables(inputs, expected) -> None:
     given a list of words, this should eliminate those words which cannot be combined
     with any others in the list
     """
-    assert expected == [word.letters for word in Table(inputs).placed]
+    assert expected == Table(inputs).placed
