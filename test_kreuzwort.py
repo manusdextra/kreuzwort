@@ -223,7 +223,6 @@ def test_placeables(inputs, expected) -> None:
     given a list of words, this should sort them in order of how easy
     they are to place
     """
-    # without this comprehension, the lists will look identical and the test will still fail
     assert expected == Wordlist(inputs).best_choices
 
 
