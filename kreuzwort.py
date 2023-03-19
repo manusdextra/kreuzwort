@@ -1,9 +1,11 @@
 """Generate an arrowword puzzle from an unordered list of words (and definitions)."""
 
-from typing import Iterator, Literal
+from typing import Iterator, List, Literal
+from enum import Enum
 
 
 class Word:
+
     """class for dictionary items and their necessary properties"""
 
     def __init__(self, letters) -> None:
@@ -12,6 +14,7 @@ class Word:
         self.hint: Literal[""] = ""  # definition to be added
         self.named_nodes: dict[int, str] = {}
         self.nodes: list[int] = []
+        self.orientation: Enum = Enum("Orientation", ["HORI", "VERT"])
 
     def __repr__(self) -> str:
         """use the word itself to represent this class"""
@@ -24,6 +27,22 @@ class Word:
     def __eq__(self, other) -> bool:
         """this helps with testing"""
         return self.letters == other
+
+    def find_possibilities(self, candidate) -> list[tuple[int, int]]:
+        """
+        list all possible connections between two words,
+        represented as a tuple of index and letter
+        """
+        possibilities: list[tuple[int, int]] = []
+        for index, letter in enumerate(self.letters):
+            matches: list = [
+                i
+                for i in candidate.named_nodes.keys()
+                if candidate.named_nodes[i] == letter
+            ]
+            for match in matches:
+                possibilities.append((index, match))
+        return possibilities
 
 
 class Wordlist:
@@ -50,6 +69,10 @@ class Wordlist:
                 else:
                     alphabet[letter] = 1
         return alphabet
+
+    def __eq__(self, other) -> bool:
+        """this helps with testing"""
+        return self.items == other.items
 
     def analyse(self, items) -> list[Word]:
         """find common letters"""
@@ -89,32 +112,6 @@ class Wordlist:
         """
         return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
 
-
-class Table:
-    """here, the words are joined up and eventually, a completed
-    puzzle will be printed / output"""
-
-    def __init__(self, words) -> None:
-        """maintain separate lists"""
-        self.unplaced: Wordlist = Wordlist(words)
-        self.placed: list[Word] = self.place_words()
-
-    def find_possibilities(self, current, candidate) -> list[tuple[int, int]]:
-        """
-        list all possible connections between two words,
-        represented as a tuple of index and letter
-        """
-        possibilities: list[tuple[int, int]] = []
-        for index, letter in enumerate(current.letters):
-            matches: list = [
-                i
-                for i in candidate.named_nodes.keys()
-                if candidate.named_nodes[i] == letter
-            ]
-            for match in matches:
-                possibilities.append((index, match))
-        return possibilities
-
     def place_words(self) -> list[Word]:
         """
         main combination loop
@@ -122,9 +119,9 @@ class Table:
         TODO: design a data structure for recording placement options,
         ideally in a way that has branches for the different possibilities
         """
-        placed: list[Word] = [self.unplaced.best_choices.pop(0)]
-        for index, candidate in enumerate(self.unplaced.best_choices):
+        placed: list[Word] = [self.best_choices.pop(0)]
+        for index, candidate in enumerate(self.best_choices):
             current = placed[index]
-            if self.find_possibilities(current, candidate):
+            if current.find_possibilities(candidate):
                 placed.append(candidate)
         return placed

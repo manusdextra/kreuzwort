@@ -1,7 +1,7 @@
 """tests for kreuzwort.py"""
 
 import pytest
-from kreuzwort import Wordlist, Table
+from kreuzwort import Wordlist
 
 
 @pytest.mark.parametrize(
@@ -164,9 +164,8 @@ def test_combinations(inputs, expected):
     Given two words, this should return a list of tuples containing the indexes
     of common letters in the first and second word
     """
-    table = Table(inputs)
-    (current, candidate) = table.unplaced
-    assert expected == table.find_possibilities(current, candidate)
+    (current, candidate) = Wordlist(inputs).items
+    assert expected == current.find_possibilities(candidate)
 
 
 @pytest.mark.parametrize(
@@ -244,4 +243,4 @@ def test_unplaceables(inputs, expected) -> None:
     given a list of words, this should eliminate those words which cannot be combined
     with any others in the list
     """
-    assert expected == Table(inputs).placed
+    assert expected == Wordlist(inputs).place_words()
