@@ -150,11 +150,13 @@ class Layout:
     """here, the words are joined up and eventually, a completed
     puzzle will be printed / output"""
 
-    def __init__(self, grid=None) -> None:
+    def __init__(
+        self,
+        grid: list[list[str]] = [[]],
+    ) -> None:
         """set up dimensions of grid, track history"""
-        self.dimensions = (0, 0)
         self.placed_words: List[Word] = []
-        self.grid = grid
+        self.grid: list[list[str]] = grid
 
     def make_space(
         self,
@@ -162,8 +164,6 @@ class Layout:
         orientation=Orientation.ACROSS,
         forward=True,
     ):
-        if not self.grid:
-            return [[]]
         length = len(self.grid[0])
         match (orientation, forward):
             case (Orientation.ACROSS, True):
@@ -178,3 +178,22 @@ class Layout:
             case (Orientation.DOWN, False):
                 for _ in range(0, spaces):
                     self.grid.insert(0, ["_" for _ in range(0, length)])
+
+    def start(self, first: Word) -> None:
+        """place first word"""
+        first.orientation = Orientation.ACROSS
+        self.make_space(len(first), first.orientation)
+        if first.orientation == Orientation.ACROSS:
+            for space, letter in enumerate(first.letters):
+                self.grid[0][space] = letter
+        if first.orientation == Orientation.DOWN:
+            for space, letter in enumerate(first.letters):
+                self.grid[space][0] = letter
+        self.placed_words.append(first)
+
+    def place(self, next_word: Word) -> None:
+        """add single word to the grid"""
+        if not self.placed_words:
+            self.start(next_word)
+        else:
+            pass

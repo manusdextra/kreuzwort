@@ -1,7 +1,7 @@
 """tests for kreuzwort.py"""
 
 import pytest
-from kreuzwort import Layout, Orientation, Wordlist
+from kreuzwort import Layout, Orientation, Word, Wordlist
 
 
 @pytest.mark.parametrize(
@@ -310,3 +310,12 @@ def test_make_space(spaces, orientation, forward, expected) -> None:
     initial = Layout(initial)
     initial.make_space(spaces, orientation, forward)
     assert initial.grid == expected
+
+
+def test_initial_word() -> None:
+    """
+    given a simple word, this should make a grid with the same dimensions and place it
+    """
+    layout = Layout()
+    layout.place(Word("hello"))
+    assert layout.grid == [["h", "e", "l", "l", "o"]]
