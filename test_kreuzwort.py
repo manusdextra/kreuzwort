@@ -1,7 +1,7 @@
 """tests for kreuzwort.py"""
 
 import pytest
-from kreuzwort import Wordlist
+from kreuzwort import Layout, Orientation, Wordlist
 
 
 @pytest.mark.parametrize(
@@ -244,3 +244,69 @@ def test_unplaceables(inputs, expected) -> None:
     with any others in the list
     """
     assert expected == Wordlist(inputs).place_words()
+
+
+@pytest.mark.parametrize(
+    "spaces,orientation,forward,expected",
+    [
+        (
+            1,
+            Orientation.ACROSS,
+            True,
+            [
+                ["_", "_", "_", "_"],
+                ["_", "x", "_", "_"],
+                ["_", "_", "_", "_"],
+            ],
+        ),
+        (
+            2,
+            Orientation.DOWN,
+            True,
+            [
+                ["_", "_", "_"],
+                ["_", "x", "_"],
+                ["_", "_", "_"],
+                ["_", "_", "_"],
+                ["_", "_", "_"],
+            ],
+        ),
+        (
+            3,
+            Orientation.DOWN,
+            True,
+            [
+                ["_", "_", "_"],
+                ["_", "x", "_"],
+                ["_", "_", "_"],
+                ["_", "_", "_"],
+                ["_", "_", "_"],
+                ["_", "_", "_"],
+            ],
+        ),
+        (
+            1,
+            Orientation.DOWN,
+            False,
+            [
+                ["_", "_", "_"],
+                ["_", "_", "_"],
+                ["_", "x", "_"],
+                ["_", "_", "_"],
+            ],
+        ),
+    ],
+)
+def test_make_space(spaces, orientation, forward, expected) -> None:
+    """
+    given an initial nested list, a direction and a number to grow it by, this should
+    append the list (or the lists nested therein) to grow the size of the grid
+    """
+    initial = [
+        ["_", "_", "_"],
+        ["_", "x", "_"],
+        ["_", "_", "_"],
+    ]
+    initial = Layout(initial)
+    initial.make_space(spaces, orientation, forward)
+    assert initial.grid == expected

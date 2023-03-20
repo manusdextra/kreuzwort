@@ -2,6 +2,22 @@
 
 from typing import Iterator, List, Literal
 from enum import Enum
+import random
+
+
+class Orientation(Enum):
+    """this will be useful as a cursor of sorts,
+    as well as enabling the growth of a grid by multiplying
+    with the length of a word or some other number.
+
+    The tuples can be accessed with Orientation.value
+
+    TODO: should this be subclassed for a cursor so it can be used
+    with negative values (which you need to grow the grid for example)?
+    """
+
+    ACROSS = (1, 0)
+    DOWN = (0, 1)
 
 
 class Word:
@@ -14,7 +30,7 @@ class Word:
         self.hint: Literal[""] = ""  # definition to be added
         self.named_nodes: dict[int, str] = {}
         self.nodes: list[int] = []
-        self.orientation: Enum = Enum("Orientation", ["HORI", "VERT"])
+        self.orientation: Orientation
 
     def __repr__(self) -> str:
         """use the word itself to represent this class"""
@@ -27,6 +43,9 @@ class Word:
     def __eq__(self, other) -> bool:
         """this helps with testing"""
         return self.letters == other
+
+    def __len__(self) -> int:
+        return len(self.letters)
 
     def find_possibilities(self, candidate) -> list[tuple[int, int]]:
         """
@@ -125,3 +144,37 @@ class Wordlist:
             if current.find_possibilities(candidate):
                 placed.append(candidate)
         return placed
+
+
+class Layout:
+    """here, the words are joined up and eventually, a completed
+    puzzle will be printed / output"""
+
+    def __init__(self, grid=None) -> None:
+        """set up dimensions of grid, track history"""
+        self.dimensions = (0, 0)
+        self.placed_words: List[Word] = []
+        self.grid = grid
+
+    def make_space(
+        self,
+        spaces=0,
+        orientation=Orientation.ACROSS,
+        forward=True,
+    ):
+        if not self.grid:
+            return [[]]
+        length = len(self.grid[0])
+        match (orientation, forward):
+            case (Orientation.ACROSS, True):
+                for row in self.grid:
+                    row += ["_" for _ in range(0, spaces)]
+            case (Orientation.ACROSS, False):
+                for row in self.grid:
+                    row = ["_" for _ in range(0, spaces)] + row
+            case (Orientation.DOWN, True):
+                for _ in range(0, spaces):
+                    self.grid.append(["_" for _ in range(0, length)])
+            case (Orientation.DOWN, False):
+                for _ in range(0, spaces):
+                    self.grid.insert(0, ["_" for _ in range(0, length)])
