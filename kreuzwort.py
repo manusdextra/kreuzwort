@@ -180,7 +180,6 @@ class Layout:
         """This function inserts or append rows and columns.
         TODO: it does not (yet) update the position of the existing
         words, which it will have to if we want a dynamic layout"""
-        print(f"spaces: {spaces}")
         match (orientation, forward):
             # trailing columns
             case (Orientation.ACROSS, True):
@@ -231,48 +230,33 @@ class Layout:
             print(self.grid)
             raise SystemExit
 
-        # calculate required space
-        # --if any!
+        # choose a possible connection
+        # TODO: this could be a point where a choice between different
+        # strategies could be made
         node_prev_word, node_next_word = possibilities[0]
-        print(node_prev_word, node_next_word)
 
-        # start with the absolute position of the next word, which may well be negative
+        # start with the absolute position of the next word, which may
+        # be out of bounds
         row, column = prev_word.position
         add_row, add_column = prev_word.orientation.value
         next_word.position = (
             (row + add_row * node_prev_word),
             (column + add_column * node_prev_word),
         )
-        print(next_word.position)
 
-        # are we interested in rows or columns?
-        add_row, add_column = next_word.orientation.value
-
-        # we need rows
-        if add_row:
-            leading_spaces = next_word.position[0] - node_next_word
-            if leading_spaces < 0:
-                print(f"need to insert {leading_spaces} rows")
-                self.make_space(
-                    leading_spaces * -1, next_word.orientation, forward=False
-                )
-            trailing_spaces = len(next_word) - node_next_word - 1
-            print(f"need to add {trailing_spaces} rows")
-            self.make_space(trailing_spaces, next_word.orientation, forward=True)
-
-        # we need columns
-        if add_column:
-            print("need columns")
+        # calculate & make required space
+        if next_word.orientation == Orientation.ACROSS:
             leading_spaces = next_word.position[1] - node_next_word
-            print(leading_spaces)
-            if leading_spaces < 0:
-                print(f"need to insert {leading_spaces} columns")
-                self.make_space(
-                    leading_spaces * -1, next_word.orientation, forward=False
-                )
-            trailing_spaces = len(next_word) - node_next_word - 1
-            print(f"need to add {trailing_spaces} columns")
-            self.make_space(trailing_spaces, next_word.orientation, forward=True)
+        else:
+            leading_spaces = next_word.position[0] - node_next_word
+        if leading_spaces < 0:
+            print(f"need to insert {leading_spaces} rows")
+            self.make_space(
+                leading_spaces * -1, next_word.orientation, forward=False
+            )
+
+        trailing_spaces = len(next_word) - node_next_word - 1
+        self.make_space(trailing_spaces, next_word.orientation, forward=True)
 
         self.write(next_word)
         self.placed_words.append(next_word)

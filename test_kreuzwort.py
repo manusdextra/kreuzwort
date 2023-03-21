@@ -369,6 +369,18 @@ def test_words() -> None:
     ]
 
 
+def test_more_words() -> None:
+    table = Layout([[]])
+    words = Wordlist(["hello", "bye"])
+    table.place(words[0])
+    table.place(words[1])
+    assert table.grid == [
+             ['_', 'b', '_', '_', '_'],
+             ['_', 'y', '_', '_', '_'],
+             ['h', 'e', 'l', 'l', 'o'],
+    ]
+
+
 def test_fresh_start() -> None:
     """
     after other tests, calling the constructor with an empty matrix should
