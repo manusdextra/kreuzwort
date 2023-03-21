@@ -253,10 +253,10 @@ class Layout:
 
     def write(self, current_word: Word) -> None:
         """add single word to the grid"""
-        (x, y) = current_word.position
+        (row, column) = current_word.position
         if current_word.orientation == Orientation.ACROSS:
             for space, letter in enumerate(current_word.letters):
-                self.grid[0][space + x] = letter
+                self.grid[column][row + space] = letter
         if current_word.orientation == Orientation.DOWN:
             for space, letter in enumerate(current_word.letters):
-                self.grid[space + y][0] = letter
+                self.grid[column + space][row] = letter
