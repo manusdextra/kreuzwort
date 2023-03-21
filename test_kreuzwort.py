@@ -348,7 +348,7 @@ def test_write() -> None:
         ["_", "_", "_"],
     ])
     word = Wordlist(["abc"])[0]
-    word.position = (0, 1)
+    word.position = (1, 0)
     word.orientation = Orientation.ACROSS
     table.write(word)
     assert table.grid == [

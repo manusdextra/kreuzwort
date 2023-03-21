@@ -180,12 +180,13 @@ class Layout:
         """This function inserts or append rows and columns.
         TODO: it does not (yet) update the position of the existing
         words, which it will have to if we want a dynamic layout"""
+        print(f"spaces: {spaces}")
         match (orientation, forward):
-            # trailing spaces
+            # trailing columns
             case (Orientation.ACROSS, True):
                 for row in self.grid:
                     row += ["_" for _ in range(0, spaces)]
-            # leading spaces
+            # leading columns
             case (Orientation.ACROSS, False):
                 for row in self.grid:
                     row = ["_" for _ in range(0, spaces)] + row
@@ -194,11 +195,11 @@ class Layout:
                     pos_row, pos_col = word.position
                     pos_row += spaces
                     word.position = (pos_row, pos_col)
-            # trailing spaces
+            # trailing rows
             case (Orientation.DOWN, True):
                 for _ in range(0, spaces):
                     self.grid.append(["_" for _ in range(0, self.columns)])
-            # leading spaces
+            # leading rows
             case (Orientation.DOWN, False):
                 for _ in range(0, spaces):
                     self.grid.insert(0, ["_" for _ in range(0, self.columns)])
