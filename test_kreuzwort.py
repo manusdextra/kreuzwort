@@ -246,6 +246,15 @@ def test_unplaceables(inputs, expected) -> None:
     assert expected == Wordlist(inputs).place_words()
 
 
+
+def test_initial_word() -> None:
+    """
+    given a simple word, this should make a grid with the same dimensions and place it
+    """
+    layout = Layout([[]])
+    layout.place(Word("hello"))
+    assert layout.grid == [["h", "e", "l", "l", "o"]]
+
 @pytest.mark.parametrize(
     "spaces,orientation,forward,expected",
     [
@@ -330,3 +339,20 @@ def test_shifted_words(spaces, orientation, forward, expected) -> None:
     table.place(words[0])
     table.make_space(spaces, orientation, forward)
     assert table.placed_words[0].position == expected
+
+
+def test_write() -> None:
+    table = Layout([
+        ["_", "_", "_"],
+        ["_", "_", "_"],
+        ["_", "_", "_"],
+    ])
+    word = Wordlist(["abc"])[0]
+    word.position = (0, 1)
+    word.orientation = Orientation.ACROSS
+    table.write(word)
+    assert table.grid == [
+        ["_", "_", "_"],
+        ["a", "b", "c"],
+        ["_", "_", "_"],
+    ]
