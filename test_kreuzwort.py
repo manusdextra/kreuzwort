@@ -356,3 +356,23 @@ def test_write() -> None:
         ["a", "b", "c"],
         ["_", "_", "_"],
     ]
+
+def test_words() -> None:
+    table = Layout([[]])
+    words = Wordlist(["aba", "cbc"])
+    table.place(words[0])
+    table.place(words[1])
+    assert table.grid == [
+        ["_", "c", "_"],
+        ["a", "b", "a"],
+        ["_", "c", "_"],
+    ]
+
+
+def test_fresh_start() -> None:
+    """
+    after other tests, calling the constructor with an empty matrix should
+    yield a clean grid
+    """
+    layout = Layout([[]])
+    assert layout.grid == [[]]
