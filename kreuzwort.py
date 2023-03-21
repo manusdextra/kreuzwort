@@ -2,7 +2,6 @@
 
 from typing import Iterator, List, Literal
 from enum import Enum
-import random
 
 
 class Orientation(Enum):
@@ -16,8 +15,9 @@ class Orientation(Enum):
     with negative values (which you need to grow the grid for example)?
     """
 
-    ACROSS = (1, 0)
-    DOWN = (0, 1)
+    # NB the tuple values are (row, column)
+    ACROSS = (0, 1)
+    DOWN = (1, 0)
 
 
 class Word:
@@ -31,6 +31,7 @@ class Word:
         self.named_nodes: dict[int, str] = {}
         self.nodes: list[int] = []
         self.orientation: Orientation
+        self.position: tuple[int, int]  # will need to be updated
 
     def __repr__(self) -> str:
         """use the word itself to represent this class"""
@@ -77,6 +78,10 @@ class Wordlist:
     def __iter__(self) -> Iterator[Word]:
         """helper"""
         return iter([word for word in self.items])
+
+    def __getitem__(self, index: int) -> Word:
+        """helper"""
+        return self.items[index]
 
     def find_all_letters(self) -> dict[str, int]:
         """starting point for analysis"""
@@ -158,42 +163,100 @@ class Layout:
         self.placed_words: List[Word] = []
         self.grid: list[list[str]] = grid
 
+    @property
+    def rows(self):
+        return len(self.grid)
+
+    @property
+    def columns(self):
+        return len(self.grid[0])
+
     def make_space(
         self,
         spaces=0,
         orientation=Orientation.ACROSS,
         forward=True,
     ):
-        length = len(self.grid[0])
+        """This function inserts or append rows and columns.
+        TODO: it does not (yet) update the position of the existing
+        words, which it will have to if we want a dynamic layout"""
         match (orientation, forward):
+            # trailing spaces
             case (Orientation.ACROSS, True):
                 for row in self.grid:
                     row += ["_" for _ in range(0, spaces)]
+            # leading spaces
             case (Orientation.ACROSS, False):
                 for row in self.grid:
                     row = ["_" for _ in range(0, spaces)] + row
+                # update position of previously placed words
+                for word in self.placed_words:
+                    pos_row, pos_col = word.position
+                    pos_row += spaces
+                    word.position = (pos_row, pos_col)
+            # trailing spaces
             case (Orientation.DOWN, True):
                 for _ in range(0, spaces):
-                    self.grid.append(["_" for _ in range(0, length)])
+                    self.grid.append(["_" for _ in range(0, self.columns)])
+            # leading spaces
             case (Orientation.DOWN, False):
                 for _ in range(0, spaces):
-                    self.grid.insert(0, ["_" for _ in range(0, length)])
-
-    def start(self, first: Word) -> None:
-        """place first word"""
-        first.orientation = Orientation.ACROSS
-        self.make_space(len(first), first.orientation)
-        if first.orientation == Orientation.ACROSS:
-            for space, letter in enumerate(first.letters):
-                self.grid[0][space] = letter
-        if first.orientation == Orientation.DOWN:
-            for space, letter in enumerate(first.letters):
-                self.grid[space][0] = letter
-        self.placed_words.append(first)
+                    self.grid.insert(0, ["_" for _ in range(0, self.columns)])
+                # update position of previously placed words
+                for word in self.placed_words:
+                    pos_row, pos_col = word.position
+                    pos_col += spaces
+                    word.position = (pos_row, pos_col)
 
     def place(self, next_word: Word) -> None:
-        """add single word to the grid"""
+        """find somewhere to put the word"""
         if not self.placed_words:
-            self.start(next_word)
-        else:
-            pass
+            next_word.orientation = Orientation.ACROSS
+            self.make_space(
+                len(next_word),
+                next_word.orientation,
+                forward=True,
+            )
+            next_word.position = (0, 0)
+            self.write(next_word)
+            self.placed_words.append(next_word)
+            return None
+        prev_word = self.placed_words[-1]
+        next_word.orientation = [
+            _ for _ in Orientation if not _ == prev_word.orientation
+        ][0] # is there a better way to do this? it seems hacky
+        possibilities = prev_word.find_possibilities(next_word)
+        if not possibilities:
+            print(self.grid)
+            raise SystemExit
+
+        # calculate required space
+        # --if any!
+        prev_node, next_node = possibilities[0]
+        print(prev_node, next_node)
+
+        leading_space = next_node
+        trailing_space = len(next_word) - next_node - 1
+
+        self.make_space(leading_space, next_word.orientation, forward=False,)
+        self.make_space(trailing_space, next_word.orientation, forward=True)
+
+        row, col = prev_word.position
+        ori_row, ori_col = prev_word.orientation.value
+        absolute = ((row + prev_node * ori_row - 1),(col + prev_node * ori_col - 1))
+        next_word.position = absolute
+        self.write(next_word)
+
+        # self.write(next_word)
+        self.placed_words.append(next_word)
+        return None
+
+    def write(self, current_word: Word) -> None:
+        """add single word to the grid"""
+        (x, y) = current_word.position
+        if current_word.orientation == Orientation.ACROSS:
+            for space, letter in enumerate(current_word.letters):
+                self.grid[0][space + x] = letter
+        if current_word.orientation == Orientation.DOWN:
+            for space, letter in enumerate(current_word.letters):
+                self.grid[space + y][0] = letter

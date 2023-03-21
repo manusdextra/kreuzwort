@@ -312,10 +312,21 @@ def test_make_space(spaces, orientation, forward, expected) -> None:
     assert initial.grid == expected
 
 
-def test_initial_word() -> None:
+@pytest.mark.parametrize(
+    "spaces,orientation,forward,expected",
+    [
+        (1, Orientation.DOWN, False, (0, 1)),
+        (3, Orientation.ACROSS, True, (0, 0)),
+        (2, Orientation.DOWN, False, (0, 2)),
+    ],
+)
+def test_shifted_words(spaces, orientation, forward, expected) -> None:
     """
-    given a simple word, this should make a grid with the same dimensions and place it
+    given an inital table and a dimension to expand that table, are the placed word's
+    positions shifted accurately?
     """
-    layout = Layout()
-    layout.place(Word("hello"))
-    assert layout.grid == [["h", "e", "l", "l", "o"]]
+    words = Wordlist(["hello"])
+    table = Layout([[]])
+    table.place(words[0])
+    table.make_space(spaces, orientation, forward)
+    assert table.placed_words[0].position == expected
