@@ -246,7 +246,6 @@ def test_unplaceables(inputs, expected) -> None:
     assert expected == Wordlist(inputs).place_words()
 
 
-
 def test_initial_word() -> None:
     """
     given a simple word, this should make a grid with the same dimensions and place it
@@ -254,6 +253,7 @@ def test_initial_word() -> None:
     layout = Layout([[]])
     layout.place(Word("hello"))
     assert layout.grid == [["h", "e", "l", "l", "o"]]
+
 
 @pytest.mark.parametrize(
     "spaces,orientation,forward,expected",
@@ -342,11 +342,13 @@ def test_shifted_words(spaces, orientation, forward, expected) -> None:
 
 
 def test_write() -> None:
-    table = Layout([
-        ["_", "_", "_"],
-        ["_", "_", "_"],
-        ["_", "_", "_"],
-    ])
+    table = Layout(
+        [
+            ["_", "_", "_"],
+            ["_", "_", "_"],
+            ["_", "_", "_"],
+        ]
+    )
     word = Wordlist(["abc"])[0]
     word.position = (1, 0)
     word.orientation = Orientation.ACROSS
@@ -357,28 +359,68 @@ def test_write() -> None:
         ["_", "_", "_"],
     ]
 
-def test_words() -> None:
-    table = Layout([[]])
-    words = Wordlist(["aba", "cbc"])
-    table.place(words[0])
-    table.place(words[1])
-    assert table.grid == [
-        ["_", "c", "_"],
-        ["a", "b", "a"],
-        ["_", "c", "_"],
-    ]
 
-
-def test_more_words() -> None:
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
+        (
+            [
+                "hello",
+                "bye",
+            ],
+            [
+                ["_", "b", "_", "_", "_"],
+                ["_", "y", "_", "_", "_"],
+                ["h", "e", "l", "l", "o"],
+            ],
+        ),
+        (
+            [
+                "chair",
+                "cardboard",
+            ],
+            [
+                ["c", "a", "r", "d", "b", "o", "a", "r", "d"],
+                ["h", "_", "_", "_", "_", "_", "_", "_", "_"],
+                ["a", "_", "_", "_", "_", "_", "_", "_", "_"],
+                ["i", "_", "_", "_", "_", "_", "_", "_", "_"],
+                ["r", "_", "_", "_", "_", "_", "_", "_", "_"],
+            ],
+        ),
+        (
+            [
+                "speaker",
+                "chair",
+            ],
+            [
+                ["_", "_", "_", "c", "_", "_", "_"],
+                ["_", "_", "_", "h", "_", "_", "_"],
+                ["s", "p", "e", "a", "k", "e", "r"],
+                ["_", "_", "_", "i", "_", "_", "_"],
+                ["_", "_", "_", "r", "_", "_", "_"],
+            ],
+        ),
+        (
+            [
+                "speaker",
+                "chair",
+            ],
+            [
+                ["_", "_", "_", "c", "_", "_", "_"],
+                ["_", "_", "_", "h", "_", "_", "_"],
+                ["s", "p", "e", "a", "k", "e", "r"],
+                ["_", "_", "_", "i", "_", "_", "_"],
+                ["_", "_", "_", "r", "_", "_", "_"],
+            ],
+        ),
+    ],
+)
+def test_words(inputs, expected) -> None:
     table = Layout([[]])
-    words = Wordlist(["hello", "bye"])
-    table.place(words[0])
-    table.place(words[1])
-    assert table.grid == [
-             ['_', 'b', '_', '_', '_'],
-             ['_', 'y', '_', '_', '_'],
-             ['h', 'e', 'l', 'l', 'o'],
-    ]
+    words = Wordlist(inputs)
+    for word in words.best_choices:
+        table.place(word)
+    assert table.grid == expected
 
 
 def test_fresh_start() -> None:
