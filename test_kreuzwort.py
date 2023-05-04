@@ -324,9 +324,9 @@ def test_make_space(spaces, orientation, forward, expected) -> None:
 @pytest.mark.parametrize(
     "spaces,orientation,forward,expected",
     [
-        (1, Orientation.DOWN, False, (0, 1)),
+        (1, Orientation.DOWN, False, (1, 0)),
         (3, Orientation.ACROSS, True, (0, 0)),
-        (2, Orientation.DOWN, False, (0, 2)),
+        (2, Orientation.DOWN, False, (2, 0)),
     ],
 )
 def test_shifted_words(spaces, orientation, forward, expected) -> None:
