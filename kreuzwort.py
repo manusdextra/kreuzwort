@@ -208,6 +208,22 @@ class Layout:
                     pos_col += spaces
                     word.position = (pos_row, pos_col)
 
+    def find_potential_match(
+        self, next_word: Word, attempt=1
+    ) -> tuple[Word, list[tuple[int, int]]]:
+        # check previously placed word(s) for a match
+        if attempt > len(self.placed_words):
+            print(self.grid)
+            raise SystemExit
+        prev_word = self.placed_words[-attempt]
+        next_word.orientation = [
+            _ for _ in Orientation if not _ == prev_word.orientation
+        ][0]
+        possibilities = prev_word.find_possibilities(next_word)
+        if not possibilities:
+            return self.find_potential_match(next_word, attempt=attempt + 1)
+        return prev_word, possibilities
+
     def place(self, next_word: Word) -> None:
         """find somewhere to put the word"""
         if not self.placed_words:
@@ -221,28 +237,23 @@ class Layout:
             self.write(next_word)
             self.placed_words.append(next_word)
             return None
-        prev_word = self.placed_words[-1]
-        next_word.orientation = [
-            _ for _ in Orientation if not _ == prev_word.orientation
-        ][0]
-        possibilities = prev_word.find_possibilities(next_word)
-        if not possibilities:
-            print(self.grid)
-            raise SystemExit
 
         # choose a possible connection
+        prev_word, possibilities = self.find_potential_match(next_word)
         # TODO: this could be a point where a choice between different
         # strategies could be made
         node_prev_word, node_next_word = possibilities[0]
+        print(possibilities[0])
 
         # start with the absolute position of the next word, which may
         # be out of bounds
-        row, column = prev_word.position
-        add_row, add_column = prev_word.orientation.value
+        row_absolute, column_absolute = prev_word.position
+        row_multiplier, column_multiplier = prev_word.orientation.value
         next_word.position = (
-            (row + add_row * node_prev_word),
-            (column + add_column * node_prev_word),
+            (row_absolute + row_multiplier * node_prev_word),
+            (column_absolute + column_multiplier * node_prev_word),
         )
+        print(f"nxt pos {next_word.position}")
 
         # calculate & make required space
         if next_word.orientation == Orientation.ACROSS:
@@ -251,16 +262,37 @@ class Layout:
             leading_spaces = next_word.position[0] - node_next_word
         if leading_spaces < 0:
             print(f"need to insert {leading_spaces} rows")
-            self.make_space(
-                leading_spaces * -1, next_word.orientation, forward=False
-            )
+            self.make_space(leading_spaces * -1, next_word.orientation, forward=False)
 
         trailing_spaces = len(next_word) - node_next_word - 1
         self.make_space(trailing_spaces, next_word.orientation, forward=True)
 
-        self.write(next_word)
-        self.placed_words.append(next_word)
+        # check if the position would lead to any conflicts
+        if self.check(next_word.position, next_word):
+            self.write(next_word)
+            self.placed_words.append(next_word)
         return None
+
+    def check(self, position, word: Word) -> bool:
+        """checks the existing grid (ignoring its bounds) for conflicting
+        letters and returns True if the word can be placed here"""
+        checks = []
+        (row, column) = position
+        if word.orientation == Orientation.ACROSS:
+            for space, letter in enumerate(word.letters):
+                try:
+                    square = self.grid[row][column + space]
+                    checks.append(square == letter or square == "_")
+                except IndexError:
+                    checks.append(True)
+        if word.orientation == Orientation.DOWN:
+            for space, letter in enumerate(word.letters):
+                try:
+                    square = self.grid[row + space][column]
+                    checks.append(square == letter or square == "_")
+                except IndexError:
+                    checks.append(True)
+        return all(checks)
 
     def write(self, current_word: Word) -> None:
         """add single word to the grid"""
