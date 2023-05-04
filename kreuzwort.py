@@ -177,22 +177,18 @@ class Layout:
         orientation=Orientation.ACROSS,
         forward=True,
     ):
-        """This function inserts or append rows and columns.
-        TODO: it does not (yet) update the position of the existing
-        words, which it will have to if we want a dynamic layout"""
+        """This function inserts or append rows and columns."""
         match (orientation, forward):
             # trailing columns
             case (Orientation.ACROSS, True):
-                for row in self.grid:
-                    row += ["_" for _ in range(0, spaces)]
+                self.grid = [row + ["_" for _ in range(0, spaces)] for row in self.grid]
             # leading columns
             case (Orientation.ACROSS, False):
-                for row in self.grid:
-                    row = ["_" for _ in range(0, spaces)] + row
+                self.grid = [["_" for _ in range(0, spaces)] + row for row in self.grid]
                 # update position of previously placed words
                 for word in self.placed_words:
                     pos_row, pos_col = word.position
-                    pos_row += spaces
+                    pos_col += spaces
                     word.position = (pos_row, pos_col)
             # trailing rows
             case (Orientation.DOWN, True):
@@ -205,7 +201,7 @@ class Layout:
                 # update position of previously placed words
                 for word in self.placed_words:
                     pos_row, pos_col = word.position
-                    pos_col += spaces
+                    pos_row += spaces
                     word.position = (pos_row, pos_col)
 
     def find_potential_match(
@@ -213,7 +209,6 @@ class Layout:
     ) -> tuple[Word, list[tuple[int, int]]]:
         # check previously placed word(s) for a match
         if attempt > len(self.placed_words):
-            print(self.grid)
             raise SystemExit
         prev_word = self.placed_words[-attempt]
         next_word.orientation = [
@@ -243,7 +238,6 @@ class Layout:
         # TODO: this could be a point where a choice between different
         # strategies could be made
         node_prev_word, node_next_word = possibilities[0]
-        print(possibilities[0])
 
         # start with the absolute position of the next word, which may
         # be out of bounds
@@ -253,19 +247,25 @@ class Layout:
             (row_absolute + row_multiplier * node_prev_word),
             (column_absolute + column_multiplier * node_prev_word),
         )
-        print(f"nxt pos {next_word.position}")
 
         # calculate & make required space
         if next_word.orientation == Orientation.ACROSS:
-            leading_spaces = next_word.position[1] - node_next_word
+            leading_spaces = prev_word.position[1] - node_next_word
         else:
-            leading_spaces = next_word.position[0] - node_next_word
+            leading_spaces = prev_word.position[0] - node_next_word
         if leading_spaces < 0:
-            print(f"need to insert {leading_spaces} rows")
             self.make_space(leading_spaces * -1, next_word.orientation, forward=False)
 
         trailing_spaces = len(next_word) - node_next_word - 1
-        self.make_space(trailing_spaces, next_word.orientation, forward=True)
+        prev_row, prev_col = prev_word.position
+        if next_word.orientation == Orientation.ACROSS:
+            absolute_column = prev_col + node_next_word
+            space_needed = absolute_column + trailing_spaces > len(self.grid[0])
+        else:
+            absolute_row = prev_row + node_next_word
+            space_needed = absolute_row + trailing_spaces > len(self.grid)
+        if space_needed:
+            self.make_space(trailing_spaces, next_word.orientation, forward=True)
 
         # check if the position would lead to any conflicts
         if self.check(next_word.position, next_word):
