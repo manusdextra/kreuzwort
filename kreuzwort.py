@@ -1,4 +1,6 @@
-"""Generate an arrowword puzzle from an unordered list of words (and definitions)."""
+"""
+Generate an arrowword puzzle from an unordered list of words (and definitions).
+"""
 
 from typing import Iterator, List, Literal
 from enum import Enum
@@ -66,7 +68,9 @@ class Word:
 
 
 class Wordlist:
-    """a sorted list of words, ranked by their number of possible combinations"""
+    """
+    a sorted list of words, ranked by their number of possible combinations
+    """
 
     def __init__(self, words) -> None:
         """analysis methods"""
@@ -254,7 +258,11 @@ class Layout:
         else:
             leading_spaces = prev_word.position[0] - node_next_word
         if leading_spaces < 0:
-            self.make_space(leading_spaces * -1, next_word.orientation, forward=False)
+            self.make_space(
+                leading_spaces * -1,
+                next_word.orientation,
+                forward=False,
+            )
 
         trailing_spaces = len(next_word) - node_next_word - 1
         prev_row, prev_col = prev_word.position
@@ -265,7 +273,11 @@ class Layout:
             absolute_row = prev_row + node_next_word
             space_needed = absolute_row + trailing_spaces > len(self.grid)
         if space_needed:
-            self.make_space(trailing_spaces, next_word.orientation, forward=True)
+            self.make_space(
+                trailing_spaces,
+                next_word.orientation,
+                forward=True,
+            )
 
         # check if the position would lead to any conflicts
         if self.check(next_word.position, next_word):
