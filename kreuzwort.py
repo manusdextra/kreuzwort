@@ -175,6 +175,10 @@ class Layout:
     def columns(self):
         return len(self.grid[0])
 
+    def output(self):
+        for line in self.grid:
+            print(line)
+
     def make_space(
         self,
         spaces=0,
@@ -213,6 +217,7 @@ class Layout:
     ) -> tuple[Word, list[tuple[int, int]]]:
         # check previously placed word(s) for a match
         if attempt > len(self.placed_words):
+            self.output()
             raise SystemExit(f"Can't match {next_word} with any of the others")
         prev_word = self.placed_words[-attempt]
         next_word.orientation = [
