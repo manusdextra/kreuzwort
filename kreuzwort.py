@@ -213,7 +213,7 @@ class Layout:
     ) -> tuple[Word, list[tuple[int, int]]]:
         # check previously placed word(s) for a match
         if attempt > len(self.placed_words):
-            raise SystemExit
+            raise SystemExit(f"Can't match {next_word} with any of the others")
         prev_word = self.placed_words[-attempt]
         next_word.orientation = [
             _ for _ in Orientation if not _ == prev_word.orientation
