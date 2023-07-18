@@ -268,6 +268,18 @@ class Layout:
                 next_word.orientation,
                 forward=False,
             )
+        # update position of next word
+        row_next, column_next = next_word.position
+        if next_word.orientation == Orientation.ACROSS:
+            next_word.position = (
+                    row_next,
+                    (prev_word.position[1] - node_next_word),
+            )
+        else:
+            next_word.position = (
+                    (prev_word.position[0] - node_next_word),
+                    column_next,
+            )
 
         trailing_spaces = len(next_word) - node_next_word - 1
         prev_row, prev_col = prev_word.position
