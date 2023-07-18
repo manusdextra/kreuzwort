@@ -63,7 +63,7 @@ class Word:
         represented as a tuple of index and letter
         """
         possibilities: list[tuple[int, int]] = []
-        for index, letter in enumerate(self.letters):
+        for index, letter in self.named_nodes.items():
             matches: list = [
                 i
                 for i in candidate.named_nodes.keys()
@@ -302,6 +302,10 @@ class Layout:
         # check if the position would lead to any conflicts
         if self.check(next_word.position, next_word):
             self.write(next_word)
+            # delete the used match from the named nodes of both words
+            # to avoid future collisions
+            del prev_word.named_nodes[possibility[0]]
+            del next_word.named_nodes[possibility[1]]
             self.placed_words.append(next_word)
         return None
 
