@@ -31,7 +31,6 @@ class Word:
         self.letters: str = letters
         self.hint: Literal[""] = ""  # definition to be added
         self.named_nodes: dict[int, str] = {}
-        self.nodes: list[int] = []
         self.orientation: Orientation
         self.position: tuple[int, int]  # will need to be updated
 
@@ -49,6 +48,14 @@ class Word:
 
     def __len__(self) -> int:
         return len(self.letters)
+
+    @property
+    def nodes(self):
+        """
+        this is done for convenience, I don't know if
+        it actually will be useful in the future
+        """
+        return list(self.named_nodes.keys())
 
     def find_possibilities(self, candidate) -> list[tuple[int, int]]:
         """
@@ -123,10 +130,6 @@ class Wordlist:
             item.named_nodes = {
                 key: val for key, val in item.named_nodes.items() if val != 0
             }
-
-            # this is done for convenience, I don't know if
-            # it actually will be useful in the future
-            item.nodes = list(item.named_nodes.keys())
         return items
 
     def rank_words(self) -> list[Word]:
