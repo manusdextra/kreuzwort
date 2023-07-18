@@ -441,6 +441,32 @@ def test_words(inputs, expected) -> None:
     assert table.grid == expected
 
 
+@pytest.mark.parametrize(
+    "inputs,expected",
+    [
+        (
+            [
+                "card",
+                "speaker",
+                "armour",
+            ],
+            [
+                ["_", "_", "_", "_", "_", "_", "c", "_", "_", "_", "_", "_"],
+                ["_", "_", "_", "_", "_", "_", "a", "r", "m", "o", "u", "r"],
+                ["s", "p", "e", "a", "k", "e", "r", "_", "_", "_", "_", "_"],
+                ["_", "_", "_", "_", "_", "_", "d", "_", "_", "_", "_", "_"],
+            ],
+        ),
+    ],
+)
+def test_collision_detection(inputs, expected) -> None:
+    table = Layout([[]])
+    words = Wordlist(inputs)
+    for word in words.best_choices:
+        table.place(word)
+    assert table.grid == expected
+
+
 def test_fresh_start() -> None:
     """
     after other tests, calling the constructor with an empty matrix should
