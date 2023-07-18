@@ -301,14 +301,27 @@ class Layout:
             )
 
         # check if the position would lead to any conflicts
-        if self.check(next_word.position, next_word):
-            self.write(next_word)
-            # delete the used match from the named nodes of both words
-            # to avoid future collisions
-            del prev_word.named_nodes[possibility[0]]
-            del next_word.named_nodes[possibility[1]]
-            self.placed_words.append(next_word)
-        return None
+        if not self.check(next_word.position, next_word):
+            return None
+
+        # commit
+        self.write(next_word)
+        # delete the used match from the named nodes of both words
+        # to avoid future collisions
+        prev_node = possibility[0]
+        next_node = possibility[1]
+
+        # NB this is a fairly blunt force approach as it doesn't take into
+        # account the possibility of adjacent letters matching with the first
+        # and last of two other words. Is there a way to allow for this?
+        prev_word.named_nodes.pop(prev_node - 1, None)
+        prev_word.named_nodes.pop(prev_node, None)
+        prev_word.named_nodes.pop(prev_node + 1, None)
+        next_word.named_nodes.pop(next_node - 1, None)
+        next_word.named_nodes.pop(next_node, None)
+        next_word.named_nodes.pop(next_node + 1, None)
+        self.placed_words.append(next_word)
+        self.output()
 
     def check(self, position, word: Word) -> bool:
         """checks the existing grid (ignoring its bounds) for conflicting
