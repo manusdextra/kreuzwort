@@ -249,7 +249,8 @@ class Layout:
         prev_word, possibilities = self.find_potential_match(next_word)
         # TODO: this could be a point where a choice between different
         # strategies could be made
-        node_prev_word, node_next_word = possibilities[0]
+        possibility = possibilities[0]
+        node_prev_word, node_next_word = possibility
 
         # start with the absolute position of the next word, which may
         # be out of bounds
