@@ -215,9 +215,13 @@ class Layout:
                     pos_row += spaces
                     word.position = (pos_row, pos_col)
 
-    def find_potential_match(
+    def find_matching_word(
         self, next_word: Word, attempt=1
     ) -> tuple[Word, list[tuple[int, int]]]:
+        """ Go through the list of previously placed
+        words and find one that matches, then return
+        the chosen word and a list of possible
+        intersections """
         # check previously placed word(s) for a match
         if attempt > len(self.placed_words):
             self.output()
@@ -228,7 +232,7 @@ class Layout:
         ][0]
         possibilities = prev_word.find_possibilities(next_word)
         if not possibilities:
-            return self.find_potential_match(next_word, attempt=attempt + 1)
+            return self.find_matching_word(next_word, attempt=attempt + 1)
         return prev_word, possibilities
 
     def place(self, next_word: Word) -> None:
@@ -246,7 +250,7 @@ class Layout:
             return None
 
         # choose a possible connection
-        prev_word, possibilities = self.find_potential_match(next_word)
+        prev_word, possibilities = self.find_matching_word(next_word)
         # TODO: this could be a point where a choice between different
         # strategies could be made
         possibility = possibilities[0]
