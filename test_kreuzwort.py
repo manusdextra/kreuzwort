@@ -165,7 +165,7 @@ def test_combinations(inputs, expected):
     of common letters in the first and second word
     """
     (current, candidate) = Wordlist(inputs).items
-    assert expected == current.find_possibilities(candidate)
+    assert expected == current.find_intersections(candidate)
 
 
 @pytest.mark.parametrize(

@@ -57,12 +57,11 @@ class Word:
         """
         return list(self.named_nodes.keys())
 
-    def find_possibilities(self, candidate) -> list[tuple[int, int]]:
+    def find_intersections(self, candidate) -> list[tuple[int, int]]:
         """
-        list all possible connections between two words,
-        represented as a tuple of index and letter
+        list all possible connections between two words
         """
-        possibilities: list[tuple[int, int]] = []
+        intersections: list[tuple[int, int]] = []
         for index, letter in self.named_nodes.items():
             matches: list = [
                 i
@@ -70,8 +69,8 @@ class Word:
                 if candidate.named_nodes[i] == letter
             ]
             for match in matches:
-                possibilities.append((index, match))
-        return possibilities
+                intersections.append((index, match))
+        return intersections
 
 
 class Wordlist:
@@ -153,7 +152,7 @@ class Wordlist:
         placed: list[Word] = [self.best_choices.pop(0)]
         for index, candidate in enumerate(self.best_choices):
             current = placed[index]
-            if current.find_possibilities(candidate):
+            if current.find_intersections(candidate):
                 placed.append(candidate)
         return placed
 
@@ -230,7 +229,7 @@ class Layout:
         next_word.orientation = [
             _ for _ in Orientation if not _ == prev_word.orientation
         ][0]
-        possibilities = prev_word.find_possibilities(next_word)
+        possibilities = prev_word.find_intersections(next_word)
         if not possibilities:
             return self.find_matching_word(next_word, attempt=attempt + 1)
         return prev_word, possibilities
