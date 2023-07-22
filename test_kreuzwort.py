@@ -229,21 +229,23 @@ def test_placeables(inputs, expected) -> None:
     "inputs,expected",
     [
         (
-            ["chair", "cardboard", "speaker", "bottle"],
-            ["cardboard", "speaker", "chair"],
+            ["chair", "card", "bet"],
+            ["bet"],
+        ),
+        (
+            ["drawing", "fairy", "harp", "bottle"],
+            ["bottle"],
         ),
         (
             ["book", "tissue", "water"],
-            ["tissue", "water"],
+            ["book"],
         ),
     ],
 )
 def test_unplaceables(inputs, expected) -> None:
-    """
-    given a list of words, this should eliminate those words which cannot be combined
-    with any others in the list
-    """
-    assert expected == Wordlist(inputs).place_words()
+    """given a list of words, this should eliminate those words which
+    cannot be combined with any others in the list"""
+    assert expected == Wordlist(inputs).unplaceables
 
 
 def test_initial_word() -> None:

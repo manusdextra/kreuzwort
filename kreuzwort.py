@@ -84,6 +84,7 @@ class Wordlist:
         self.alphabet: dict[str, int] = self.find_all_letters()
         self.items: list[Word] = self.analyse(self.items)
         self.best_choices: list[Word] = self.rank_words()
+        self.unplaceables: list[Word] = self.filter_unplaceables()
 
     def __iter__(self) -> Iterator[Word]:
         """helper"""
@@ -142,19 +143,13 @@ class Wordlist:
         """
         return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
 
-    def place_words(self) -> list[Word]:
-        """
-        main combination loop
-
-        TODO: design a data structure for recording placement options,
-        ideally in a way that has branches for the different possibilities
-        """
-        placed: list[Word] = [self.best_choices.pop(0)]
-        for index, candidate in enumerate(self.best_choices):
-            current = placed[index]
-            if current.find_intersections(candidate):
-                placed.append(candidate)
-        return placed
+    def filter_unplaceables(self) -> list[Word]:
+        unplaceables = []
+        for index, word in enumerate(self.best_choices):
+            if not word.nodes:
+                unplaceables.append(word)
+                del self.best_choices[index]
+        return unplaceables
 
 
 class Layout:
