@@ -217,10 +217,10 @@ class Layout:
     def find_matching_word(
         self, next_word: Word, attempt=1
     ) -> tuple[Word, list[tuple[int, int]]]:
-        """ Go through the list of previously placed
+        """Go through the list of previously placed
         words and find one that matches, then return
         the chosen word and a list of possible
-        intersections """
+        intersections"""
         # check previously placed word(s) for a match
         if attempt > len(self.placed_words):
             self.output()
@@ -279,13 +279,13 @@ class Layout:
         row_next, column_next = next_word.position
         if next_word.orientation == Orientation.ACROSS:
             next_word.position = (
-                    row_next,
-                    (prev_word.position[1] - node_next_word),
+                row_next,
+                (prev_word.position[1] - node_next_word),
             )
         else:
             next_word.position = (
-                    (prev_word.position[0] - node_next_word),
-                    column_next,
+                (prev_word.position[0] - node_next_word),
+                column_next,
             )
 
         trailing_spaces = len(next_word) - node_next_word - 1
