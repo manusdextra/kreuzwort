@@ -288,7 +288,8 @@ class Layout:
         prev_row, prev_col = prev_word.position
         if next_word.orientation == Orientation.ACROSS:
             absolute_column = prev_col + node_next_word
-            space_needed = absolute_column + trailing_spaces > len(self.grid[0])
+            space_needed = absolute_column + \
+                trailing_spaces > len(self.grid[0])
         else:
             absolute_row = prev_row + node_next_word
             space_needed = absolute_row + trailing_spaces > len(self.grid)
