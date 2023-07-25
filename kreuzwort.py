@@ -82,7 +82,6 @@ class Wordlist:
         """analysis methods"""
         self.items: list[Word] = [Word(item) for item in words]
         self.items: list[Word] = self.analyse(self.items)
-        self.best_choices: list[Word] = self.rank_words()
         self.unplaceables: list[Word] = self.filter_unplaceables()
 
     def __iter__(self) -> Iterator[Word]:
@@ -109,6 +108,16 @@ class Wordlist:
                     alphabet[letter] = 1
         return alphabet
 
+    @property
+    def most_nodes(self) -> list[Word]:
+        """Rank words by number of nodes from most to least"""
+        return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
+
+    @property
+    def least_nodes(self) -> list[Word]:
+        """Rank words by number of nodes from least to most"""
+        return sorted(self.items, key=lambda x: len(x.nodes))
+
     def analyse(self, items) -> list[Word]:
         """find common letters"""
         for item in items:
@@ -132,23 +141,12 @@ class Wordlist:
             }
         return items
 
-    def rank_words(self) -> list[Word]:
-        """
-        this could be adapted to different strategies
-        according to what determines a word's worth
-
-        TODO: it could also return a score, which would
-        make testing it easier since more than one word
-        can have a particular score
-        """
-        return sorted(self.items, key=lambda x: len(x.nodes), reverse=True)
-
     def filter_unplaceables(self) -> list[Word]:
         unplaceables = []
-        for index, word in enumerate(self.best_choices):
+        for index, word in enumerate(self.most_nodes):
             if not word.nodes:
                 unplaceables.append(word)
-                del self.best_choices[index]
+                del self.most_nodes[index]
         return unplaceables
 
 

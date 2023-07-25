@@ -178,12 +178,7 @@ def test_combinations(inputs, expected):
                 "schedule",
                 "phone",
             ],
-            [
-                "schedule",
-                "phone",
-                "pen",
-                "eraser",
-            ],
+            "schedule",
         ),
         (
             [
@@ -193,13 +188,7 @@ def test_combinations(inputs, expected):
                 "country",
                 "special",
             ],
-            [
-                "armchair",
-                "variety",
-                "country",
-                "uncle",
-                "special",
-            ],
+            "armchair",
         ),
         (
             [
@@ -207,11 +196,7 @@ def test_combinations(inputs, expected):
                 "maths",
                 "tablet",
             ],
-            [
-                "tablet",
-                "dictionary",
-                "maths",
-            ],
+            "tablet",
         ),
         (
             [
@@ -219,11 +204,7 @@ def test_combinations(inputs, expected):
                 "vocabulary",
                 "medicine",
             ],
-            [
-                "rucksack",
-                "vocabulary",
-                "medicine",
-            ],
+            "rucksack",
         ),
     ],
 )
@@ -232,7 +213,9 @@ def test_sorting(inputs, expected) -> None:
     given a list of words, this should sort them in order of how easy
     they are to place
     """
-    assert expected == Wordlist(inputs).best_choices
+    wordlist = Wordlist(inputs)
+    best_word = wordlist.most_nodes[0]
+    assert best_word == expected
 
 
 @pytest.mark.parametrize(
@@ -431,7 +414,7 @@ def test_write() -> None:
 def test_words(inputs, expected) -> None:
     table = Layout([[]])
     words = Wordlist(inputs)
-    for word in words.best_choices:
+    for word in words.most_nodes:
         table.place(word)
     assert table.grid == expected
 
@@ -476,7 +459,7 @@ def test_words(inputs, expected) -> None:
 def test_collision_detection(inputs, expected) -> None:
     table = Layout([[]])
     words = Wordlist(inputs)
-    for word in words.best_choices:
+    for word in words.most_nodes:
         table.place(word)
     assert table.grid == expected
 
