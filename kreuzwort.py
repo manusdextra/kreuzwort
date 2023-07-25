@@ -81,7 +81,6 @@ class Wordlist:
     def __init__(self, words) -> None:
         """analysis methods"""
         self.items: list[Word] = [Word(item) for item in words]
-        self.alphabet: dict[str, int] = self.find_all_letters()
         self.items: list[Word] = self.analyse(self.items)
         self.best_choices: list[Word] = self.rank_words()
         self.unplaceables: list[Word] = self.filter_unplaceables()
@@ -94,7 +93,12 @@ class Wordlist:
         """helper"""
         return self.items[index]
 
-    def find_all_letters(self) -> dict[str, int]:
+    def __eq__(self, other) -> bool:
+        """this helps with testing"""
+        return self.items == other.items
+
+    @property
+    def alphabet(self) -> dict[str, int]:
         """starting point for analysis"""
         alphabet: dict[str, int] = {}
         for item in self.items:
@@ -104,10 +108,6 @@ class Wordlist:
                 else:
                     alphabet[letter] = 1
         return alphabet
-
-    def __eq__(self, other) -> bool:
-        """this helps with testing"""
-        return self.items == other.items
 
     def analyse(self, items) -> list[Word]:
         """find common letters"""
