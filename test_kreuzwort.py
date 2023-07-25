@@ -172,8 +172,18 @@ def test_combinations(inputs, expected):
     "inputs,expected",
     [
         (
-            ["pen", "eraser", "schedule", "phone"],
-            ["schedule", "phone", "pen", "eraser"],
+            [
+                "pen",
+                "eraser",
+                "schedule",
+                "phone",
+            ],
+            [
+                "schedule",
+                "phone",
+                "pen",
+                "eraser",
+            ],
         ),
         (
             [
@@ -217,7 +227,7 @@ def test_combinations(inputs, expected):
         ),
     ],
 )
-def test_placeables(inputs, expected) -> None:
+def test_sorting(inputs, expected) -> None:
     """
     given a list of words, this should sort them in order of how easy
     they are to place
