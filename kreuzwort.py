@@ -182,14 +182,17 @@ class Layout:
         orientation=Orientation.ACROSS,
         forward=True,
     ):
-        """This function inserts or append rows and columns."""
+        """This function inserts or append rows and columns. This also involves
+        updating the position of the already placed words."""
         match (orientation, forward):
             # trailing columns
             case (Orientation.ACROSS, True):
-                self.grid = [row + ["_" for _ in range(0, spaces)] for row in self.grid]
+                self.grid = [
+                    row + ["_" for _ in range(0, spaces)] for row in self.grid]
             # leading columns
             case (Orientation.ACROSS, False):
-                self.grid = [["_" for _ in range(0, spaces)] + row for row in self.grid]
+                self.grid = [
+                    ["_" for _ in range(0, spaces)] + row for row in self.grid]
                 # update position of previously placed words
                 for word in self.placed_words:
                     pos_row, pos_col = word.position
